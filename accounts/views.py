@@ -30,6 +30,15 @@ class sessionsView(View):
 
         sessionlist = createSessionObject()
 
+        for each in range(len(sessionlist)):
+            object = users.objects.filter(id=sessionlist[each]['id'])[0]
+            sessionlist[each]['profile'] = f"{sessionlist[each]['profile']} - {profiletype(sessionlist[each]['profile'],texts)}"
+            sessionlist[each]['lastlogin'] = object.last_login
+            sessionlist[each]['activitytime'] = strfdelta(now() - object.last_login, "{days}d:{hours}h:{minutes}m:{seconds}s")
+
+        paginator = Paginator(sessionlist,paginatorDefault)
+        sessionlist = paginator.get_page(1)
+        
         context = {
            "session" : request.session,
             "texts" : texts,
@@ -38,6 +47,39 @@ class sessionsView(View):
         }
         
         return render(request, 'accounts/sessions.html', context)
+    def post(self,request):
+        if not isadmin(request.session):
+            return HttpResponseRedirect(reverse('login_page'))
+        texts = initializeTextDB(df,language,request.session)
+        resposta = processRequest(request)
+        if resposta['key'] == 'logoff':
+            Session.objects.filter(pk=resposta['data'])[0].delete()
+
+        elif resposta['key'] == 'paginate':
+            sessionlist = createSessionObject()
+            for each in range(len(sessionlist)):
+                object = users.objects.filter(id=sessionlist[each]['id'])[0]
+                sessionlist[each]['profile'] = f"{sessionlist[each]['profile']} - {profiletype(sessionlist[each]['profile'],texts)}"
+                sessionlist[each]['lastlogin'] = object.last_login
+                sessionlist[each]['activitytime'] = strfdelta(now() - object.last_login, "{days}d:{hours}h:{minutes}m:{seconds}s")
+
+
+            if resposta['amount']:
+                paginatorDefault = resposta['amount']
+
+            paginator = Paginator(sessionlist,paginatorDefault)
+            sessionlist = paginator.get_page(resposta['data'])
+            
+            context = {
+                "session" : request.session,
+                "texts" : texts,
+                "objects": sessionlist,
+                "paginatorDefault": paginatorDefault
+                
+            }
+            
+            return render(request, 'accounts/sessions.html', context)
+
 
         
 
@@ -189,22 +231,27 @@ class eachaccountView(View):
         }
 
         if resposta and resposta['key'] == 'activities':
+            if resposta['amount']:
+                paginatorDefault = resposta['amount']
 
             userlog = user_log.objects.filter(id_user=id).order_by('-id')
             paginator = Paginator(userlog,paginatorDefault)
             userlog = paginator.get_page(resposta['page'])
             context['userlogheaders'] = list(userlog[0].__dict__.keys())[1:]
             context['userlog'] = userlog
+            context['paginatorDefault'] = paginatorDefault
             return render(request, 'accounts/modals/activities.html', context)
 
         elif resposta and resposta['key'] == 'logintry':
-            
+            if resposta['amount']:
+                paginatorDefault = resposta['amount']
 
             loginlog = login_log.objects.filter(username=se.username).order_by('-id')
             paginator = Paginator(loginlog,paginatorDefault)
             loginlog = paginator.get_page(resposta['page'])
             context['loginlogheaders'] = list(loginlog[0].__dict__.keys())[1:]
             context['loginlog'] = loginlog
+            context['paginatorDefault'] = paginatorDefault
             return render(request, 'accounts/modals/logintry.html', context)
 
         elif resposta and resposta['key'] == 'change':

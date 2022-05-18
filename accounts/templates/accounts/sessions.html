@@ -1,4 +1,9 @@
 
-{% for x in objects%}
-{{x}}
-{% endfor %}
+
+<div id="sessionsblock">
+    {% include "accounts/modals/sessiontable.html" with objects=objects %}
+</div>
+
+
+
+
