@@ -1,0 +1,68 @@
+{% load static%}
+{% load custom_tags %}
+
+<style>
+    tr:nth-child(even) {
+        background-color: #D6EEEE;
+      }
+
+      table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding:0.5rem
+      }
+
+    a {
+        cursor: pointer;
+        color: blue
+    }
+    a:hover{
+        filter:brightness(0.5)
+    }
+</style>
+
+<h1 class="h1title">{{texts.activities}}</h1>
+
+<table>
+<tr>
+    {% for key in userlogheaders %}
+    <th>{{key}}</th>
+    {% endfor %}
+</tr>
+{% for data in userlog %}
+<tr>
+    {% for key in userlogheaders %}
+    <td>{{data | get_key:key}}</td>
+    {% endfor %}
+</tr>
+{% endfor %}
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if userlog.has_previous %}
+            <a onclick="paginateActivities(1)">&laquo; {{texts.txtFirst}}</a>
+            <a onclick="paginateActivities({{ userlog.previous_page_number }})">{{texts.txtPrevious}}</a>
+        {% endif %}
+
+        <span class="current">
+            {{texts.page}} {{ userlog.number }} {{texts.txtof}} {{ userlog.paginator.num_pages }}.
+        </span>
+
+        {% if userlog.has_next %}
+            <a onclick="paginateActivities({{ userlog.next_page_number }})">{{texts.txtNext}}</a>
+            <a onclick="paginateActivities({{ userlog.paginator.num_pages }})">{{textx.txtLast}} &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+<script src="{% static 'accounts/js/functions.js'%}"></script>
+
+<script>
+
+async function paginateActivities(page){
+    url = "{% url 'each_account_page' id %}"
+    obj = activities
+    await fetchobject(url, {'key': 'activities', 'page': page}, obj)
+}
+</script>

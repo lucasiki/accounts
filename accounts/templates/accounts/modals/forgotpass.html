@@ -1,0 +1,78 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static "accounts/css/forgotpass.css"%}">
+
+<div id="shadowbox" class="shadowbox" onclick="showhide(forgotpassword)">
+
+</div>
+
+<section id="modalbox" class="modalbox">
+
+    <div id ="cabecalho" class="cabecalho">
+        <h1>{{texts.passreset}}</h1>
+        <hr>
+    </div>
+
+    <form id="maincontext" class="maincontext">
+
+        <div id="usernameresetfield" class="forminput">    
+            <label>{{texts.username}}:</label>
+            <input type="text" id="mainusernamereset" maxlength=25
+            </input>
+        </div>
+        
+        <div  id="emailresetfield" class="forminput">
+            <label>{{texts.email}}:</label>
+            <input type="text" id="mainemailreset" maxlength=50
+            </input>
+        </div>
+    </form>
+
+    <div id="validationsmodals" class="validationsmodals">
+    </div>
+
+    <br>
+
+    <input id="sendbutton" type="button" value="{{texts.btnenviar}}" class="mainbutton" 
+    onclick="solicitarReset('{% url 'login_page' %}', maincontext, validationsmodals)">
+
+
+
+</section>
+<script src="{% static 'accounts/js/functions.js'%}"></script>
+<script>
+async function solicitarReset(url,form,validation){
+   data = createData('reset', form)
+   
+   if (data['mainusernamereset'] == '')
+   {
+    validation.innerHTML = '<li>{{texts.emptyfield}}</li>'
+    validation['style'].color = 'red'
+    return
+   }
+
+   if (data['mainemailreset'] == '')
+   {
+    validation.innerHTML = '<li>{{texts.emptyfield}}</li>'
+    validation['style'].color = 'red'
+    return
+   }
+
+   data['newpass'] = random(14)
+
+   obj = await fetchobject(url,data,validation)
+   if (obj.includes('ACCEPTKEY')){
+    validation['style'].color = 'green'
+    data['key'] = 'sendresetemail'
+    sendbutton.value='{{texts.btnfechar}}'
+    sendbutton.setAttribute('onclick', 'window.location.reload()') 
+    fetchpage(url,data)
+    return
+   }
+
+   
+    validation['style'].color = 'red'
+
+}
+
+</script>

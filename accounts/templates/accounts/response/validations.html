@@ -1,0 +1,14 @@
+
+{% if key == texts.acceptkey %}
+    {{return.data|safe}}
+    <span hidden>ACCEPTKEY</span>
+{% elif key == texts.goodkey%}
+    {% if return and return.data != '' %}
+        {{return.data|safe}}
+        {%else%}
+        <span hidden>CONFIRMATIONKEY</span>
+    {% endif %}
+{% else %}
+SystemFail.
+{%endif%}
+

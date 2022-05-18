@@ -1,0 +1,38 @@
+{% load static %}
+
+<h1 class="h1title">{{texts.txtPesquisar}}</h1>
+
+<form id="newform">
+<div id="logincontent" class="grid-mode">    
+        <div id="usernamefield" class="forminput">    
+        <label>{{texts.username}}:</label>
+        <input type="text" id="mainusername" maxlength=25
+        </input>
+    </div>
+    <div id="firstnamefield" class="forminput">    
+        <label>{{texts.firstname}}:</label>
+        <input type="text" id="firstname" maxlength=25
+        </input>
+    </div>
+
+
+
+    <input onclick="btnsearch('{% url 'manager_page' %}', newform, retorno)" type="button" value = "{{texts.btnenviar}}">
+    
+</div>
+
+</form>
+
+<div hidden id="retorno">
+</div>
+
+
+<script src="{% static 'accounts/js/functions.js'%}"></script>
+
+<script>
+    async function btnsearch(url, data, target){
+        newdata = createData('search', data)
+        obj = await fetchobject(url,newdata,target)
+        target.hidden = false
+    }
+</script>

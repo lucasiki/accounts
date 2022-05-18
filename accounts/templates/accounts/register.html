@@ -1,0 +1,152 @@
+{% load static %}
+
+<section id= "registry_section" class="section-behind" style="width:75%;">
+    <form id="registry_form" class="registry-form">
+        <h1 class="h1title">{{texts.headerregistro}}</h1>
+        <p>
+        <div id="formcontent">    
+            <div id="usernamefield" class="forminput">    
+            <label>{{texts.username}}:</label>
+            <input type="text" id="mainusername" maxlength=25
+            onchange="validateFields('{% url 'validations'%}', {'key':'username', 'value':this.value}, response, this)"></input>
+            </div>
+            
+            <div id="firstnamefield" class="forminput"> 
+            <label>{{texts.firstname}}:</label>
+            <input type="text" id="firstname" maxlength=25 onchange="paintfield(this)"></input>
+            </div>
+
+            <div id="lastnamefield" class="forminput"> 
+            <label>{{texts.lastname}}:</label>
+            <input type="text" id="lastname" maxlength=50 onchange="paintfield(this)"></input>
+            </div>
+            <br>
+
+            <div id="emailfield" class="forminput">
+            <label>{{texts.email}}:</label>
+            <input type="text" id="emailtext" maxlength=50 
+            onchange="validateFields('{% url 'validations'%}', {'key':'email', 'value':this.value}, response, this)"></input>
+            </div>
+
+            <div  id="passfield" class="forminput">
+            <label>{{texts.password}}:</label>
+            <input type="password" type="text" id="password" maxlength=50
+            onchange="validateFields('{% url 'validations'%}', {'key':'password', 'value':this.value}, response, this)"></input>
+            </div>
+
+            <div id="repassfield" class="forminput">
+            <label>{{texts.repassword}}:</label>
+            <input type="password" type="text" id="repassword" maxlength=50
+            onchange="validatepassword(this,password, response)"></input>
+            </div>
+
+            <br>
+            <div id="checkfield" class="checkinput">
+            <input type="checkbox" id="terms"></input>
+            <label>{{texts.terms}}</label>
+            </div>
+        </div>
+        </p>
+
+        <div id="response"></div>
+        <br>
+
+        <input type="button" id="btnSend" class="mainbutton" value="{{texts.btnenviar}}" 
+        onclick="enviar('{% url 'validations' %}', registry_form, response)"></input>
+        
+      
+    </form>
+
+</section>
+
+<script src="{% static 'accounts/js/functions.js'%}"></script>
+<script>
+    async function enviar(url, form, object){
+    data = createData('signup', form)
+
+
+    for (let index = 0; index < form.length; index++) {
+        if (form[index].value == ''){
+            document.getElementById(form[index].id).style['background-color'] = 'pink'
+            document.getElementById(form[index].id).style['border-color'] = 'red'
+           
+        }
+
+    }
+
+    if (checkfield.children[0].checked == false){
+        checkfield.style['color'] = 'red'
+        object.style['color'] = 'red'
+        
+    }
+    else{
+        data['terms'] = 'yes'
+        checkfield.style['color'] = 'green'
+    }
+
+    object.style['color'] = 'green'
+    object.innerHTML = '{{texts.wait}}'
+    obj = await fetchobject(url, data, object)
+    if (obj.includes('ACCEPTKEY')){
+        //location.reload()
+        data['key'] = 'sendemail'
+        fetchpage(url,data)
+        alert('Usuário cadastrado com sucesso!')
+        location.href = "{% url 'login_page'%}"
+    }
+    
+    if ( obj.includes('CONFIRMATIONKEY') )
+        object.style['color'] = 'green'
+    else    
+        object.style['color'] = 'red'
+
+
+    }
+
+    async function validateFields(url,data,object,field){
+        if (data['value'] == ''){
+            object.innerHTML ='<li>{{texts.emptyfield2}}</li>'
+            object.style['color'] = 'red'
+            field.style['background-color'] = 'pink'
+            field.style['border-color'] = 'red'
+            return 0
+        }
+        
+       obj = await fetchobject(url, data, object)
+       if ( obj.includes('CONFIRMATIONKEY') ){
+        object.style['color'] = 'green'
+        field.style['background-color'] = 'white'
+        field.style['border-color'] = 'green'
+
+    }
+       else{
+        object.style['color'] = 'red'
+        field.style['background-color'] = 'pink'
+        field.style['border-color'] = 'red'
+
+    }
+    }
+
+    function validatepassword(object1, object2, messageobject){
+        if (object1.value == object2.value){
+            object1.style['background-color'] = 'white'
+            object1.style['border-color'] = 'green'
+        }
+        else{
+            object1.style['background-color'] = 'pink'
+            object1.style['border-color'] = 'red'
+            messageobject.style['color'] = 'red'
+            messageobject.innerHTML ='<li>{{texts.passwordmismatch}}</li>'
+        }
+    }
+
+    function paintfield(object){
+        if (object.value != ''){
+            object.style['background-color'] = 'white'
+            object.style['border-color'] = 'green'
+        }
+    }
+
+
+    
+    </script>

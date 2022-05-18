@@ -1,0 +1,86 @@
+{% load static %}
+
+<h1 class="h1title">{{texts.passchange}}</h1>
+
+<form id="newform">
+    <div id="logincontent" class="grid-mode">    
+        <div id="passwordfield" class="forminput">    
+        <label>{{texts.actualpassword}}:</label>
+        <input type="password" id="mainpassword" maxlength=50> 
+        </input>
+        </input>
+        </div>
+        
+        <div  id="passfield" class="forminput">
+            <label>{{texts.newpassword}}:</label>
+            <input type="password" type="text" id="password" maxlength=50 
+            onchange="validateFields('{% url 'validations'%}', {'key':'password', 'value':this.value}, response, this)">
+            </input>
+        </div>
+
+        <div id="repassfield" class="forminput">
+            <label>{{texts.repassword}}:</label>
+            <input type="password" type="text" id="repassword" maxlength=50
+            onchange="validatepassword(this,password, response)"></input>
+        </div>
+    </div>
+    <div id="response">
+    </div>
+
+    <input id="btnSend" style="margin: 1vw auto 0vw auto;" type="button" class="mainbutton" value="{{texts.btnenviar}}"
+    onclick="validarsenha('{% url 'passchange_page' id %}', newform, response)">
+</form>
+
+<script src="{% static 'accounts/js/functions.js'%}"></script>
+
+<script>
+
+    async function validarsenha(url, form, obj){
+        data = createData('resetpass', form)
+
+        resp = await fetchobject(url,data,obj)
+        if (resp.includes('ACCEPTKEY')){
+        alert("{{texts.succespassword}}")
+        reload(1)
+        return
+        }
+        obj.style['color'] = 'red'
+    }
+
+    function validatepassword(object1, object2, messageobject){
+        if (object1.value == object2.value){
+            object1.style['background-color'] = 'white'
+            object1.style['border-color'] = 'green'
+        }
+        else{
+            object1.style['background-color'] = 'pink'
+            object1.style['border-color'] = 'red'
+            messageobject.style['color'] = 'red'
+            messageobject.innerHTML ='<li>{{texts.passwordmismatch}}</li>'
+        }
+    }
+
+    async function validateFields(url,data,object,field){
+        if (data['value'] == ''){
+            object.innerHTML ='<li>{{texts.emptyfield2}}</li>'
+            object.style['color'] = 'red'
+            field.style['background-color'] = 'pink'
+            field.style['border-color'] = 'red'
+            return 0
+        }
+        
+       obj = await fetchobject(url, data, object)
+       if ( obj.includes('CONFIRMATIONKEY') ){
+        object.style['color'] = 'green'
+        field.style['background-color'] = 'white'
+        field.style['border-color'] = 'green'
+
+    }
+       else{
+        object.style['color'] = 'red'
+        field.style['background-color'] = 'pink'
+        field.style['border-color'] = 'red'
+
+    }
+    }
+</script>

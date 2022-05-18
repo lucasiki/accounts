@@ -1,0 +1,72 @@
+
+
+
+{% load static %}
+
+
+<h1 class="h1title">{{texts.txtEdit}} {{texts.username}} {{combined.first_name.data | title}} {{combined.last_name.data | title}}</h1>
+
+<form id="newform">
+
+
+  
+<div id="allcontent" class="grid-mode">    
+    {% for key, value in combined.items %}
+        <div id="div{{key}}" class="forminput">    
+        <label>{{value.label}}:</label>
+        <input {% if value.editable == 0%}disabled{% endif %} type="text" id="{{key}}" value="{{value.data}}" title="{{value.desc}}">
+        </input>
+    </div>
+    {% endfor %}
+
+    <input onclick="changedata('{% url 'each_account_page' id %}', newform, validations)" type="button" value = "{{texts.txtChange}}">
+    <input onclick="solicitarReset('{% url 'login_page' %}')" type="button" value = "{{texts.passreset}}">
+    <button><a style="all:unset" href="{% url 'passchange_page' id %}">{{texts.passchange}}</a></button>
+
+    <div id="validations">
+    </div>
+    
+</div>
+
+</form>
+
+<div id="activities">
+    {% include "accounts/modals/activities.html" %}
+</div>
+
+<div id="logintry">
+    {% include "accounts/modals/logintry.html" %}
+</div>
+
+
+<script src="{% static 'accounts/js/functions.js'%}"></script>
+
+<script>
+
+    async function changedata(url, form, validation){
+        data = createData('change', form)
+        obj = await fetchobject(url, data, validation)
+        if (obj.includes('ACCEPTKEY')){
+            reload(2000)
+        }
+    }
+
+    async function solicitarReset(url,validation){
+        data= {
+            'key':'reset',
+            'mainusernamereset': "{{combined.username.data}}",
+            'mainemailreset': "{{combined.email.data}}",
+            'newpass': random(14)
+        }
+
+    
+       obj = await fetchobject(url,data,validations)
+       if (obj.includes('ACCEPTKEY')){
+        data['key'] = 'sendresetemail'
+        fetchpage(url,data)
+        return
+       }
+    
+    }
+    
+    </script>

@@ -1,0 +1,62 @@
+{% load static%}
+{% load custom_tags %}
+
+
+<style>
+    tr:nth-child(even) {
+        background-color: #D6EEEE;
+      }
+
+      table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding:0.5rem
+      }
+</style>
+
+<h1 class="h1title">{{texts.loginattempts}}</h1>
+
+<table>
+<tr>
+    {% for key in loginlogheaders %}
+    <th>{{key}}</th>
+    {% endfor %}
+</tr>
+{% for data in loginlog %}
+<tr>
+    {% for key in loginlogheaders %}
+    <td>{{data | get_key:key}}</td>
+    {% endfor %}
+</tr>
+{% endfor %}
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if loginlog.has_previous %}
+            <a onclick="paginateLogintry(1)">&laquo; {{texts.txtFirst}}</a>
+            <a onclick="paginateLogintry({{ loginlog.previous_page_number }})">{{texts.txtPrevious}}</a>
+        {% endif %}
+
+        <span class="current">
+            {{texts.page}} {{ loginlog.number }} {{texts.txtof}} {{ loginlog.paginator.num_pages }}.
+        </span>
+
+        {% if loginlog.has_next %}
+            <a onclick="paginateLogintry({{ loginlog.next_page_number }})">{{texts.txtNext}}</a>
+            <a onclick="paginateLogintry({{ loginlog.paginator.num_pages }})">{{textx.txtLast}} &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+<script src="{% static 'accounts/js/functions.js'%}"></script>
+
+
+<script>
+
+async function paginateLogintry(page){
+    url = "{% url 'each_account_page' id %}"
+    obj = logintry
+    await fetchobject(url, {'key': 'logintry', 'page': page}, obj)
+}
+</script>

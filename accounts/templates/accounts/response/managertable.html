@@ -1,0 +1,25 @@
+
+<style>
+    tr:nth-child(even) {
+        background-color: #D6EEEE;
+      }
+
+      table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding:0.5rem
+      }
+</style>
+<table>
+<tr>
+    <th>ID</th><th>{{texts.username}}</th><th>{{texts.firstname}}</th><th>{{texts.txtActions}}</th>
+</tr>
+{% for search in searched %}
+<tr>
+    <td>{{search.id}}</td>
+    <td>{{search.username}}</td>
+    <td>{{search.first_name}}</td>    
+    <td style="cursor:pointer"><a href="{% url 'each_account_page' search.id %}" >{{texts.txtEdit}}</a></td>
+</tr>
+{% endfor %}
+</table>
