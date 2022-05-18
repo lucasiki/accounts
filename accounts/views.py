@@ -21,21 +21,23 @@ df = read_excel('accounts/static/accounts/textdb.xlsx') ## Initialize wordsdb
 language = 'pt-br'
 paginatorDefault = 10
 
-class sessionsanomView(View):
-    def get(self,request):
-        if not isadmin(request.session):
-            return HttpResponseRedirect(reverse('login_page'))
-        pass
 
 ##Require beeing the administrator
 class sessionsView(View):
-    def get(self,request):
+    def get(self,request,slug=''):
         if not isadmin(request.session):
             return HttpResponseRedirect(reverse('login_page'))
         texts = initializeTextDB(df,language,request.session)
-
-        sessionlist = createSessionObject()
+        if slug=='anonymous':
+            anonymous = 1
+        else:
+            anonymous =0
+        sessionlist = createSessionObject(anonymous)
+        print(sessionlist)
         for each in range(len(sessionlist)):
+            if sessionlist[each]['id'] == 0:
+                sessionlist[each]['firstname'] = texts['Anonymous']
+                continue
             object = users.objects.filter(id=sessionlist[each]['id'])[0]
             sessionlist[each]['profile'] = f"{sessionlist[each]['profile']} - {profiletype(sessionlist[each]['profile'],texts)}"
             sessionlist[each]['lastlogin'] = object.last_login
@@ -52,7 +54,7 @@ class sessionsView(View):
         }
         
         return render(request, 'accounts/sessions.html', context)
-    def post(self,request):
+    def post(self,request,slug=''):
         if not isadmin(request.session):
             return HttpResponseRedirect(reverse('login_page'))
         texts = initializeTextDB(df,language,request.session)
@@ -61,8 +63,15 @@ class sessionsView(View):
             Session.objects.filter(pk=resposta['data'])[0].delete()
 
         elif resposta['key'] == 'paginate':
-            sessionlist = createSessionObject()
+            if slug=='anonymous':
+                anonymous = 1
+            else:
+                anonymous =0
+            sessionlist = createSessionObject(anonymous)
             for each in range(len(sessionlist)):
+                if sessionlist[each]['id'] == 0:
+                    sessionlist[each]['firstname'] = texts['Anonymous']
+                    continue
                 object = users.objects.filter(id=sessionlist[each]['id'])[0]
                 sessionlist[each]['profile'] = f"{sessionlist[each]['profile']} - {profiletype(sessionlist[each]['profile'],texts)}"
                 sessionlist[each]['lastlogin'] = object.last_login
@@ -163,27 +172,27 @@ class eachaccountView(View):
         keys = [
             'username', 'status', 'profile_type', 'email',
             'first_name', 'last_name', 'last_login',
-             'online', 'expire_pwd','ip', 'session_key' 
+            'expire_pwd','ip', 'session_key' 
              ]
             
         #Labels formados serverside
         labels = [
             texts['username'], texts['txtStatus'], texts['txtPerfil'], texts['email'],
             texts['firstname'], texts['lastname'], texts['txtLastLogin'], 
-            texts['txtOnline'], texts['txtExpirepwd'],texts['txtIp'], texts['txtSessionKey'] 
+            texts['txtExpirepwd'],texts['txtIp'], texts['txtSessionKey'] 
             ]
 
         #Data serverside
         data = [se.username, se.status, se.profile_type, se.email, se.first_name,
         se.last_name, datetime.datetime.strftime(se.last_login, "%Y/%m/%d %H:%M:%S"),
-        se.online, datetime.datetime.strftime(se.expire_pwd, "%Y/%m/%d"), se.ip, se.session_key]
+        datetime.datetime.strftime(se.expire_pwd, "%Y/%m/%d"), se.ip, se.session_key]
 
         #Item editável ? 1 = sim, 0 = não
-        editable = [1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0]
+        editable = [1, 1, 1, 1, 1, 1, 0, 1, 0, 0]
 
         #Descrições de cada item individual
         desc = ['', f"0 - {texts['Active']}, 1 - {texts['Password_Blocked']}, 2 - {texts['Inactive']}",
-        f"1 - {texts['administrator_text']}, 2 - {texts['manager_text']}, 4 - {texts['client_text']}", '', '', '', '', '', '', '', '']
+        f"1 - {texts['administrator_text']}, 2 - {texts['manager_text']}, 4 - {texts['client_text']}", '', '', '', '', '', '', '']
 
 
         combined = {}

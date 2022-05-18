@@ -141,7 +141,7 @@ def functionvalidateSignup(data,texts):
 def destroysession(request):  
     user = users.objects.filter(id = request.session['id'])
     user_log(id_user = user[0], task = 'logoff', ip=user[0].ip, session_key = user[0].session_key).save()
-    user.update(online = 0, ip = '', session_key = '')
+    user.update(ip = '', session_key = '')
 
     
     request.session['id'] = ''
@@ -159,6 +159,8 @@ def createSessionObject(anonymous=0):
         data['session_key'] = x.session_key
         if anonymous == 0 and data['id'] == '':
             continue
+        elif anonymous == 1 and data['id'] == '':
+            data['id'] = 0
         sessionlist.append(data)
 
     return sessionlist
@@ -209,7 +211,7 @@ def validateSignIn(retorno,texts, request):
 
 
             
-            usermodel.update(online = 1, ip=ip, session_key=sessionkey, last_login = now())
+            usermodel.update(ip=ip, session_key=sessionkey, last_login = now())
             
             
             return 1
