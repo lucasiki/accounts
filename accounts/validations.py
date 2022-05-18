@@ -151,7 +151,6 @@ def destroysession(request):
 def createSessionObject():
     # 1 - Pegar todas as sessões ativas.
     sessionobject = Session.objects.all()
-    print(sessionobject)
 
     # 2 - Para cada sessão ativa, criar uma lista com os seus dados.
     sessionlist = []
@@ -431,3 +430,9 @@ def issameuser(session, id):
     if getuser.id == id:
         return 1
     return 0
+
+def strfdelta(tdelta, fmt):
+    d = {"days": tdelta.days}
+    d["hours"], rem = divmod(tdelta.seconds, 3600)
+    d["minutes"], d["seconds"] = divmod(rem, 60)
+    return fmt.format(**d)

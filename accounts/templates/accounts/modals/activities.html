@@ -9,7 +9,8 @@
       table, th, td {
         border: 1px solid black;
         border-collapse: collapse;
-        padding:0.5rem
+        padding:0.5rem;
+        text-align: center;
       }
 
     a {
@@ -22,6 +23,26 @@
 </style>
 
 <h1 class="h1title">{{texts.activities}}</h1>
+<h2 class="h2title">{{texts.registernumber}}: {{userlog | length}}</h2>
+
+{% with objects=userlog%}
+<div class="flexrow">
+    <div id="selectobject">
+        <label for="paginatorselector">{{texts.rowmax}}:</label>
+        <select onchange="paginateActivities({{ objects.number }})" id="paginatorselector">
+            {% if paginatorDefault%}<option hidden value="{{paginatorDefault}}">{{paginatorDefault}}</option>{% endif %}
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+    <div hidden id ="searchbox">
+        <label for="paginatorfilter">{{texts.txtSearch}}:</label>
+        <input onchange="paginateActivities({{ objects.number }})" type="text" id="paginatorfilter" value="">
+    </div>
+</div>
+{% endwith %}
 
 <table>
 <tr>
@@ -46,7 +67,7 @@
         {% endif %}
 
         <span class="current">
-            {{texts.page}} {{ userlog.number }} {{texts.txtof}} {{ userlog.paginator.num_pages }}.
+            {{texts.page}} {{ userlog.number }} {{texts.txtof|lower}} {{ userlog.paginator.num_pages }}.
         </span>
 
         {% if userlog.has_next %}
@@ -63,6 +84,6 @@
 async function paginateActivities(page){
     url = "{% url 'each_account_page' id %}"
     obj = activities
-    await fetchobject(url, {'key': 'activities', 'page': page}, obj)
+    await fetchobject(url, {'key': 'activities', 'page': page, 'amount':paginatorselector.value}, obj)
 }
 </script>

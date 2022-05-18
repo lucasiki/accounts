@@ -1,0 +1,113 @@
+{% load static %}
+<h2 class="h2title">{{texts.registernumber}}: {{objects | length}}</h2>
+
+<style>
+    tr:nth-child(even) {
+        background-color: #D6EEEE;
+      }
+
+      table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding:0.5rem;
+        text-align: center;
+        
+      }
+      a {
+        all:unset;
+        cursor: pointer;
+        color: blue
+    }
+    a:hover{
+        filter:brightness(0.5)
+    }
+    .flexrow{
+        display:flex
+    }
+</style>
+
+<div class="flexrow">
+    <div id="selectobject">
+        <label for="paginatorselector">{{texts.rowmax}}:</label>
+        <select onchange="paginate({{ objects.number }})" id="paginatorselector">
+            {% if paginatorDefault%}<option hidden value="{{paginatorDefault}}">{{paginatorDefault}}</option>{% endif %}
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+    </div>
+    <div hidden id ="searchbox">
+        <label for="paginatorfilter">{{texts.txtSearch}}:</label>
+        <input onchange="paginate({{ objects.number }})" type="text" id="paginatorfilter" value="">
+    </div>
+</div>
+<table>
+<tr>
+    <th>ID</th>
+    <th>{{texts.firstname}}</th>
+    <th>{{texts.txtPerfil}}</th>
+    <th>{{texts.txtSessionKey}}</th>
+    <th>{{texts.txtLastLogin}}</th>
+    <th>{{texts.activitiytime}}</th>
+    <th>{{texts.txtActions}}</th>
+</tr>
+{% for each in objects %}
+<tr>
+    <td>{{each.id}}</td>
+    <td>{{each.firstname}}</td>
+    <td>{{each.profile}}</td>
+    <td>{{each.session_key}}</td>  
+    <td>{{each.lastlogin}}</td>  
+    <td>{{each.activitytime}}</td>  
+    <td style="cursor:pointer">
+        <a href="{% url 'each_account_page' each.id %}" >{{texts.txtEdit}}</a><br>
+        <a onclick="logoff('{% url 'sessions_page' %}','{{each.session_key}}')" >{{texts.userlogoff}}</a>
+    </td>
+</tr>
+{% endfor %}
+
+
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if objects.has_previous %}
+            <a onclick="paginate(1)">&laquo; {{texts.txtFirst}}</a>
+            <a onclick="paginate({{ objects.previous_page_number }})">{{texts.txtPrevious}}</a>
+        {% endif %}
+
+        <span class="current">
+            {{texts.page}} {{ objects.number }} {{texts.txtof|lower}} {{ objects.paginator.num_pages }}.
+        </span>
+
+        {% if objects.has_next %}
+            <a onclick="paginate({{ objects.next_page_number }})">{{texts.txtNext}}</a>
+            <a onclick="paginate({{ objects.paginator.num_pages }})">{{textx.txtLast}} &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+<script src="{% static 'accounts/js/functions.js'%}"></script>
+
+<script>
+    url = "{% url 'sessions_page'%}"
+    object = sessionsblock
+    async function paginate(page){
+        data = {
+            'key': 'paginate',
+            'data': page,
+            'amount': paginatorselector.value
+        }
+        await fetchobject(url,data,object)
+
+    }
+    async function logoff(url,data){
+        newdata ={
+            'key':'logoff',
+            'data':data
+        }
+        await fetchpage(url,newdata)
+        reload(1000)
+    }
+</script>
