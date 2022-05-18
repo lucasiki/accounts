@@ -33,7 +33,7 @@ class sessionsView(View):
         else:
             anonymous =0
         sessionlist = createSessionObject(anonymous)
-        print(sessionlist)
+        #print(sessionlist)
         for each in range(len(sessionlist)):
             if sessionlist[each]['id'] == 0:
                 sessionlist[each]['firstname'] = texts['Anonymous']
