@@ -151,7 +151,6 @@ def destroysession(request):
 def createSessionObject():
     # 1 - Pegar todas as sessões ativas.
     sessionobject = Session.objects.all()
-    print(sessionobject)
 
     # 2 - Para cada sessão ativa, criar uma lista com os seus dados.
     sessionlist = []

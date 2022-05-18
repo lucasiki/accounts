@@ -424,13 +424,20 @@ class validationsView(View):
                 if textoretorno['data'] == '':
                     salt = randomstring(random.randint(5,10))
                     creationdate = timezone.now()
+                    profile_type = 4
+                    try:
+                        users.objects.all()[0]
+                        print('deu algo')
+                    except:
+                        profile_type = 1
+
                     newuser = users(
                         username = retorno['mainusername']
                         ,password = validatePassword(retorno['password'], salt, creationdate)
                         ,status = 0
                         ,createdate = creationdate
                         ,salt = salt
-                        ,profile_type = 4
+                        ,profile_type = profile_type
                         ,email = retorno['emailtext']
                         ,first_name = retorno['firstname']
                         ,last_name = retorno['lastname']
