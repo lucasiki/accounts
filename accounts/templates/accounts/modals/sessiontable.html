@@ -53,7 +53,8 @@
     <th>{{texts.txtActions}}</th>
 </tr>
 {% for each in objects %}
-<tr>
+
+<tr id="eachrow">
     <td>{{each.id}}</td>
     <td>{{each.firstname}}</td>
     <td>{{each.profile}}</td>
@@ -65,6 +66,7 @@
         <a onclick="logoff('{% url 'sessions_page' %}','{{each.session_key}}')" >{{texts.userlogoff}}</a>
     </td>
 </tr>
+
 {% endfor %}
 
 
@@ -110,4 +112,5 @@
         await fetchpage(url,newdata)
         reload(1000)
     }
+
 </script>
