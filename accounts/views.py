@@ -21,6 +21,12 @@ df = read_excel('accounts/static/accounts/textdb.xlsx') ## Initialize wordsdb
 language = 'pt-br'
 paginatorDefault = 10
 
+class sessionsanomView(View):
+    def get(self,request):
+        if not isadmin(request.session):
+            return HttpResponseRedirect(reverse('login_page'))
+        pass
+
 ##Require beeing the administrator
 class sessionsView(View):
     def get(self,request):
@@ -29,7 +35,6 @@ class sessionsView(View):
         texts = initializeTextDB(df,language,request.session)
 
         sessionlist = createSessionObject()
-
         for each in range(len(sessionlist)):
             object = users.objects.filter(id=sessionlist[each]['id'])[0]
             sessionlist[each]['profile'] = f"{sessionlist[each]['profile']} - {profiletype(sessionlist[each]['profile'],texts)}"

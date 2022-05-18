@@ -148,7 +148,7 @@ def destroysession(request):
     request.session['firstname'] = ''
     request.session['profile'] = ''  
 
-def createSessionObject():
+def createSessionObject(anonymous=0):
     # 1 - Pegar todas as sessões ativas.
     sessionobject = Session.objects.all()
 
@@ -157,6 +157,8 @@ def createSessionObject():
     for x in sessionobject:
         data = x.get_decoded()
         data['session_key'] = x.session_key
+        if anonymous == 0 and data['id'] == '':
+            continue
         sessionlist.append(data)
 
     return sessionlist
