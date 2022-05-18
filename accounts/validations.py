@@ -8,8 +8,12 @@ from datetime import date
 from .models import *
 from django.contrib.sessions.models import Session
 
-
-def initializeTextDB(df,language):
+# language = default, and try to get stored session language
+def initializeTextDB(df,language, session):
+    try: 
+        language = session['language']
+    except:
+        pass
     texts = df.filter(['key',language]) ## pt-br deve variar de acordo com a session.
     keys = texts['key'].to_list()
     content = texts[language].to_list()

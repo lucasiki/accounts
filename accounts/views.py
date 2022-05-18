@@ -26,7 +26,7 @@ class sessionsView(View):
     def get(self,request):
         if not isadmin(request.session):
             return HttpResponseRedirect(reverse('login_page'))
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
 
         sessionlist = createSessionObject()
 
@@ -44,7 +44,7 @@ class sessionsView(View):
 ##Require beeing the user or the administrator
 class passchangeView(View):
     def get(self,request, id):
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         context = {
            "session" : request.session,
             "texts" : texts,
@@ -55,7 +55,7 @@ class passchangeView(View):
 
         return HttpResponseRedirect(reverse('login_page'))
     def post(self,request,id):
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         context = {
             "session" : request.session,
             "texts" : texts,
@@ -106,7 +106,7 @@ class eachaccountView(View):
     def get(self, request, id):
         if not isadmin(request.session):
             return HttpResponseRedirect(reverse('login_page'))
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         se = users.objects.filter(id = id)[0]
 
         if not isadmin(request.session):
@@ -179,7 +179,7 @@ class eachaccountView(View):
     def post(self,request,id):
         if not isadmin(request.session):
             return HttpResponseRedirect(reverse('login_page'))
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         resposta = processRequest(request)
         se = users.objects.filter(id = id)[0]
         context = {
@@ -275,7 +275,7 @@ class manageView(View):
     def get(self, request):
         if not isadmin(request.session):
             return HttpResponseRedirect(reverse('login_page'))
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         
         context = {
            "session" : request.session,
@@ -285,7 +285,7 @@ class manageView(View):
     def post(self, request):
         if not isadmin(request.session):
             return HttpResponseRedirect(reverse('login_page'))
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         retorno = processRequest(request)
         print(retorno)
         searched = users.objects.all()
@@ -307,7 +307,7 @@ class logoffView(View):
     def get(self, request):
         if not isauth(request.session):
             return HttpResponseRedirect(reverse('login_page'))
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         destroysession(request)
         context = {
            "session" : request.session,
@@ -320,7 +320,7 @@ class loggedView(View):
     def get(self, request):
         if not isauth(request.session):
             return HttpResponseRedirect(reverse('login_page'))
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         context = {
            "session" : request.session,
             "texts" : texts 
@@ -336,14 +336,14 @@ class loginView(View):
             request.session['id'] = ''
             request.session['firstname'] = ''
             request.session['profile'] = ''
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         context = {
            "session" : request.session,
             "texts" : texts 
         }
         return render(request, 'accounts/login.html', context)
     def post(self, request):
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         context = {
            "session" : request.session,
             "texts" : texts 
@@ -403,7 +403,7 @@ class loginView(View):
 class validationsView(View):
     def post(self,request):
             
-            texts = initializeTextDB(df,language)
+            texts = initializeTextDB(df,language,request.session)
             responsekey = texts['goodkey']
             retorno = processRequest(request)
             textoretorno = {
@@ -459,7 +459,7 @@ class validationsView(View):
 
 class registerView(View):
     def get(self,request):
-        texts = initializeTextDB(df,language)
+        texts = initializeTextDB(df,language,request.session)
         context = {
             "session" : request.session,
             "texts" : texts,
