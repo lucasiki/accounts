@@ -118,11 +118,11 @@ class passchangeView(View):
 
                 if resposta['mainpassword'] == '' or resposta['password'] == '' or resposta['repassword'] == '':
                     context['return'] = {'data': texts['emptyfield']} 
-                    print(context['return'])
+                    #print(context['return'])
 
                 elif textoretorno['data'] != '':
                     context['return'] =  textoretorno
-                    print(context['return'])
+                    #print(context['return'])
 
                 elif resposta['password'] != resposta['repassword']:
                     context['return'] = {'data': texts['passwordmismatch']}
@@ -131,10 +131,10 @@ class passchangeView(View):
                     context['return'] = {'data': texts['wrongpass']}
                 
                 
-                print(context['return'])
+                #print(context['return'])
                 if context['return'] == '':
                     salt = randomstring(random.randint(5,10))
-                    print('entrouaqui')
+                    #print('entrouaqui')
                     getuser.update(
                         password = validatePassword(resposta['password'],salt,getuser[0].createdate),
                         salt = salt
@@ -291,7 +291,7 @@ class eachaccountView(View):
                 position = 'email'
                 if resposta['email'] != se.__dict__['email']:
                     available = functionvalidateEmail(resposta['email'], texts)
-                    print(available)
+                    #print(available)
                     if  available['data'] == '':
                         se.__dict__['email'] = resposta['email']
                     else:
@@ -339,14 +339,14 @@ class manageView(View):
             return HttpResponseRedirect(reverse('login_page'))
         texts = initializeTextDB(df,language,request.session)
         retorno = processRequest(request)
-        print(retorno)
+        #print(retorno)
         searched = users.objects.all()
         if retorno and retorno['key'] == 'search' and retorno['mainusername']:
             searched = searched.filter(username = retorno['mainusername'])
         if retorno and retorno['key'] == 'search' and retorno['firstname']:
             searched = searched.filter(first_name__contains = retorno['firstname'])
 
-        print(searched)
+        #print(searched)
 
         context = {
            "session" : request.session,
@@ -411,7 +411,7 @@ class loginView(View):
             retorno['emailtext'] = retorno['mainemailreset']
 
             sendmail('accounts/email/passwordrecover.html',retorno, texts)
-            print('Email enviado')
+            #print('Email enviado')
             responsekey = texts['acceptkey']
             return render(request, 'accounts/response/validations.html', context)   
             
@@ -479,7 +479,7 @@ class validationsView(View):
                     profile_type = 4
                     try:
                         users.objects.all()[0]
-                        print('deu algo')
+                        #print('deu algo')
                     except:
                         profile_type = 1
 
@@ -496,7 +496,7 @@ class validationsView(View):
                         ) 
                     
                     newuser.save()    
-                    print('registrado com sucesso!')
+                    #print('registrado com sucesso!')
 
                     responsekey = texts['acceptkey']
 
