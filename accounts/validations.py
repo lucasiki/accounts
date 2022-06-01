@@ -7,6 +7,9 @@ import hashlib
 from datetime import date
 from .models import *
 from django.contrib.sessions.models import Session
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from functools import wraps
 
 # language = default, and try to get stored session language
 def initializeTextDB(df,language, session):
@@ -440,3 +443,24 @@ def strfdelta(tdelta, fmt):
     d["hours"], rem = divmod(tdelta.seconds, 3600)
     d["minutes"], d["seconds"] = divmod(rem, 60)
     return fmt.format(**d)
+
+def user_auth(function):
+    def wrap(self, request, *args, **kwargs):
+        if not isauth(request.session):
+            return HttpResponseRedirect(reverse('login_page'))
+        return function(self, request, *args, **kwargs)
+    return wrap
+
+def user_admin(function):
+    def wrap(self,request,*args,**kwargs):
+        if not isadmin(request.session):
+            return HttpResponseRedirect(reverse('login_page'))
+        return function(self, request, *args, **kwargs)
+    return wrap
+
+def same_user(function):
+    def wrap(self, request, id, *args, ** kwargs):
+        if not issameuser(request.session, id):
+            return HttpResponseRedirect(reverse('login_page'))
+        return function(self, request, id, *args, **kwargs)
+    return wrap
