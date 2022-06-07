@@ -154,18 +154,25 @@ def destroysession(request):
 def createSessionObject(anonymous=0):
     # 1 - Pegar todas as sessões ativas.
     sessionobject = Session.objects.all()
+    
 
     # 2 - Para cada sessão ativa, criar uma lista com os seus dados.
     sessionlist = []
     for x in sessionobject:
         data = x.get_decoded()
         data['session_key'] = x.session_key
-        if anonymous == 0 and data['id'] == '':
-            continue
-        elif anonymous == 1 and data['id'] == '':
+        
+        try:
+            if anonymous == 0 and data['id'] == '':
+                continue
+            elif anonymous == 1 and data['id'] == '':
+                data['id'] = 0
+        except:
             data['id'] = 0
+            
+            
+        
         sessionlist.append(data)
-
     return sessionlist
 
 
