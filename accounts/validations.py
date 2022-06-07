@@ -168,7 +168,7 @@ def createSessionObject(anonymous=0):
             elif anonymous == 1 and data['id'] == '':
                 data['id'] = 0
         except:
-            data['id'] = 0
+            continue
             
             
         
