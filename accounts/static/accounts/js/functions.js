@@ -184,3 +184,32 @@ function reload(time){
     }
     setTimeout(reloadtime,time)
 }
+
+
+    async function fetchpage2(url,data){
+
+
+        var csrftoken = getCookie('csrftoken');
+        var headers = new Headers();
+        headers.append('X-CSRFToken', csrftoken);
+        headers.append('Accept', 'application/json');
+        headers.append('X-Requested-With', 'XMLHttpRequest');
+        
+    
+        //FETCH -> IrÃ¡ atualizar o banco de dados do checkbo com base no valor do checkbox.
+        //let url =  // URL
+        
+        let response = await fetch(url,{
+            method: 'POST',
+            credentials: 'include',     
+            headers: headers,
+            body: data
+          });
+        
+    
+           //FETCH ASYNCRONO - Lembrando que a funÃ§Ã£o precisa ser asyncrona.
+        obj = await response
+        
+        
+        return (obj) 
+    }
