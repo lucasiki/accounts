@@ -128,14 +128,14 @@ function uncheck(object){
 }    
 
 function createData(key,form){
-FormData = {}
+formdata = {}
 for (let index = 0; index < form.length; index++) {
   if (form[index].disabled == false)
-  FormData[form[index].id] = form[index].value
+  formdata[form[index].id] = form[index].value
     
 }
     FormData['key'] = key
-    return(FormData)
+    return(formdata)
 }
 
 const random = (length = 8) => {
@@ -212,4 +212,23 @@ function reload(time){
         
         
         return (obj) 
+    }
+
+function createDataFiles(key,form){
+    var formdata = new FormData()
+    for (let index = 0; index < form.length; index++) {
+        if (form[index].disabled == false){
+            if (form[index].type == 'file')
+            {
+                formdata.append(form[index].id, form[index].files[0])
+            } else {
+                
+            formdata.append(form[index].id, form[index].value)
+            
+            }
+        }
+        
+    }
+        formdata['key'] = key
+        return(formdata)
     }
