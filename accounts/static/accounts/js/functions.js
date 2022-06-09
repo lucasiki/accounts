@@ -134,7 +134,7 @@ for (let index = 0; index < form.length; index++) {
   formdata[form[index].id] = form[index].value
     
 }
-    FormData['key'] = key
+    formdata['key'] = key
     return(formdata)
 }
 
