@@ -60,6 +60,7 @@ class sessionsView(View):
         texts = initializeTextDB(df,language,request.session)
         resposta = processRequest(request)
         if resposta['key'] == 'logoff':
+            context = {}
             Session.objects.filter(pk=resposta['data'])[0].delete()
 
         elif resposta['key'] == 'paginate':
@@ -92,7 +93,7 @@ class sessionsView(View):
                 
             }
             
-            return render(request, 'accounts/sessions.html', context)
+        return render(request, 'accounts/sessions.html', context)
 
 
         
