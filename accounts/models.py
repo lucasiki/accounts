@@ -16,7 +16,7 @@ class users(models.Model):
     first_name = models.CharField(max_length=25)
     last_name = models.CharField(max_length=50)
     last_login = models.DateTimeField(null=True)
-    expire_pwd = models.DateTimeField(default=(now() + timedelta(90)))
+    expire_pwd = models.DateTimeField(auto_now=True)
     ip = models.CharField(max_length=25, default='')
     session_key = models.CharField(max_length=100 , default='')
 
