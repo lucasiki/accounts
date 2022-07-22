@@ -19,6 +19,14 @@ class users(models.Model):
     expire_pwd = models.DateTimeField(auto_now=True)
     ip = models.CharField(max_length=25, default='')
     session_key = models.CharField(max_length=100 , default='')
+    
+    def __str__(self):
+        return self.username
+
+    def is_admin(self):
+        if self.profile_type == 1:
+            return True
+        return False
 
 
 class user_log(models.Model):
